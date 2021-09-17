@@ -2,7 +2,7 @@
 set -eux
 
 module purge
-source ../modulefiles/nsst.wcoss_dell_p3  
+source ../modulefiles/nsst.wcoss2  
 module list
 
 mkdir -p ../exec

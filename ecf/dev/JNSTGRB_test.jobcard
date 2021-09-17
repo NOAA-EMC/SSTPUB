@@ -1,13 +1,12 @@
+#!/bin/bash
+##PBS -q dev_shared
+#PBS -A GFS-DEV
+#PBS -j oe
+#PBS -N jnsst
+#PBS -l select=1:ncpus=2:mem=2000MB
+#PBS -l walltime=00:10:00
+
 set -x
-#BSUB -q dev_shared
-#BSUB -P GFS-DEV
-#BSUB -o log.nsst.%J
-#BSUB -e log.nsst.%J
-#BSUB -J jnsst
-#BSUB -q dev
-#BSUB -M 2400
-#BSUB -W 10:00
-##BSUB -R span[ptile=14]
 
 export envir=test         # prod, para or test
 export job=jnsst
@@ -18,20 +17,23 @@ export RUN_ENVIR=test
 . $MODULESHOME/init/ksh
 
 module purge
-module load ips/18.0.1.163
-module load impi/18.0.1
+module load envvar/1.0
+module load PrgEnv-intel/8.1.0
+module load craype/2.7.8
+module load cray-mpich/8.1.7
+module load intel/19.1.3.304
+module load w3nco/2.4.1
+module load bacio/2.4.1
+module load nemsio/2.5.2
+module load netcdf/4.7.4
 
-module load NetCDF/4.5.0
-module load nemsio/2.2.3
-module load w3nco/2.0.6
-module load bacio/2.0.2
-
-module load prod_envir
-module load prod_util
-module load grib_util/1.0.6
-module load gempak/7.3.1
-module load ecflow/4.7.1
-module load lsf/10.1
+module load prod_envir/2.0.5
+module load prod_util/2.0.8
+module load grib_util/1.2.2
+module load libjpeg/9c
+module load wgrib2/2.0.8
+module load gempak/7.14.0
+module load ecflow/5.6.0.6
 
 module list
 
@@ -45,17 +47,17 @@ export jlogfile=${COMROOT}/logs/jlogfiles/jlogfile.${job}.${pid}
 
 
 if [ "$envir" = 'test' ] ; then
-  export NWROOT=/gpfs/dell2/emc/modeling/noscrub/Xu.Li/git
-  export COMROOT_test=/gpfs/dell2/emc/modeling/noscrub/Xu.Li/com
-  export DATAROOT=/gpfs/dell2/ptmp/Xu.Li/nsst/work
+  export NWROOT=/lfs/h2/emc/da/noscrub/Xu.Li
+  export COMROOT_test=/lfs/h2/emc/da/noscrub/Xu.Li/com/gfs/${envir}
+  export DATAROOT=/lfs/h2/emc/ptmp/Xu.Li/nsst/work
   export DBNROOT=${UTILROOT}/fakedbn
 
   mkdir -p $COMROOT_test
   mkdir -p $DATAROOT
-  mkdir -p $DBNROOT
+# mkdir -p $DBNROOT
 
-  export jlogfile=${COMROOT_test}/logs/${envir}/jlogfile.${job}.${pid}
-  mkdir -p ${COMROOT_test}/logs/${envir}
+  export jlogfile=${COMROOT_test}/jlogfile.${job}.${pid}
+  mkdir -p ${COMROOT_test}/logs
 fi
 
 export SENDECF=YES
@@ -66,7 +68,7 @@ export SENDWEB=NO
 export KEEPDATA=YES
 export model=nsst
 
-modelver=v1.0.0
+modelver=v1.2
 
 export HOMEnsst=${NWROOT}/${model}.$modelver
-ksh ${HOMEnsst}/jobs/JNSST
+ksh ${HOMEnsst}/ecf/dev/JNSST_test

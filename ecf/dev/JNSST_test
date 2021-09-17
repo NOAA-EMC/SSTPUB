@@ -1,0 +1,74 @@
+#!/bin/ksh
+
+set -xa
+
+date
+export PS4='$SECONDS + '
+
+#################################################
+# get work directory
+################################################
+export DATA=${DATA:-${DATAROOT:?}/${jobid:?}}   # temporary running directory
+mkdir -p $DATA
+cd $DATA
+
+####################################
+# Specify NET and RUN Name and model
+####################################
+export NET=gfs
+export RUN=sst
+
+export cycle=t${cyc}z
+#########################################
+# Run setpdy and initialize PDY variables
+#########################################
+#setpdy.sh
+#. PDY
+
+#export CDATE=${CDATE:-${PDY}${cyc}}
+
+export PDY=20210824
+
+#echo 'CDATE : ' $CDATE
+
+echo 'CDATE : ' ${PDY}${cyc}
+
+###################################################
+# Set directories where this job's input and output is located
+# using the COMIN and COMOUT variables
+###################################################
+#export COMINgdas=/lfs/h1/ops/canned/com/gfs/v16.2/gdas.20210824/12/atmos/gdas.t12z.sfcanl.nc
+export COMINgdas=/lfs/h1/ops/canned/com/gfs/v16.2/gdas.${PDY}
+export COMOUT=$COMROOT_test/nst.${PDY}
+#export COMINgdas=${COMINgdas:-$(compath.py gfs/prod/gdas.${PDY})}
+export COMIN=${COMIN:-${COMROOT}/${NET}/${envir}/${RUN}.${PDY}}  # not used
+export COMOUT=${COMOUT:-$COMROOT/${NET}/${envir}/${RUN}.${PDY}}
+export COMOUTwmo=${COMOUTwmo:-${COMOUT}/wmo}
+export COMOUTgempak=${COMOUTgempak:-${COMOUT}/gempak}
+mkdir -p $COMOUT $COMOUTwmo $COMOUTgempak
+
+#################################################
+# get work directory
+################################################
+ export DATA=${DATA:-${DATAROOT:?}/${jobid:?}}   # temporary running directory
+ mkdir -p $DATA
+ cd $DATA
+#################################################
+# Specify job's execution areas (directory paths)
+#################################################
+export EXECnsst=${EXECnsst:-$HOMEnsst/exec}
+export FIXnsst=${FIXnsst:-$HOMEnsst/fix}
+export PARMnsst=${PARMnsst:-$HOMEnsst/parm}
+
+# Execute the script
+$HOMEnsst/scripts/exnsst.sh.ecf
+export err=$?;err_chk
+
+msg='ENDED NORMALLY.'
+postmsg "$jlogfile" "$msg"
+
+if [[ "$KEEPDATA" != YES ]] ; then
+  cd $DATAROOT
+  rm -rf $DATA
+fi
+
