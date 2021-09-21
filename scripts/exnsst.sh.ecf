@@ -232,12 +232,6 @@ $WGRIB2 rtgssthr_grb_0.083.grib2 -s > rtgssthr_grb_0.083.grib2.idx  ;export err=
 #  - use wgrib2 to change the TMP parameter to WTMP (Water temperature)
 #
 ##########################################################
-
-#
-# Reset temperarily. Will switch back to default COPYGB after its problem is fixed
-#
-COPYGB=/lfs/h2/emc/ptmp/copygb
-
 $COPYGB -x -k'4*-1 11' -B-1 -K'4*-1 81' -A\<0.5 nsst.t12z.sst.0p25.grb nsst.t12z.sst.0p25.grb.masked ;export err=$?;err_chk
 $CNVGRIB -g12 -p0 nsst.t12z.sst.0p25.grb.masked nsst.t12z.TMP.0p25.grib2                             ;export err=$?;err_chk
 $WGRIB2 nsst.t12z.TMP.0p25.grib2 -if ":TMP:" -set_var WTMP -fi -grib nsst.t12z.sst.0p25.grib2        ;export err=$?;err_chk
