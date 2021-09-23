@@ -3,7 +3,7 @@
 #PBS -A GFS-DEV
 #PBS -j oe
 #PBS -N jnsst
-#PBS -l select=1:ncpus=2:mem=2000MB
+#PBS -l select=1:ncpus=1:mem=2000MB
 #PBS -l walltime=00:10:00
 
 set -x

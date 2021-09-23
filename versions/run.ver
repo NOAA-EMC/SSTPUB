@@ -21,6 +21,3 @@ export wgrib2_ver=2.0.8
 export gempak_ver=7.14.0
 export ecflow_ver=5.6.0.6
 
-# For testing with canned data
-export PDY=20210824
-export COMINgdas=/lfs/h1/ops/canned/com/gfs/v16.2/
